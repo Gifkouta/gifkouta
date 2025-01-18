@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transfer Antar Mitra</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 2%;
+      text-align: center;
+      background-color: #f0f0f0;
+    }
+
+    .box {
+      margin-bottom: 3%;
+      background-color: rgba(225, 225, 235, 0.20);
+      box-shadow: 0px 0.5px 5px rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
+    }
+
+    .label {
+      width: 100%;
+      padding: 6px 0px 6px 0px;
+      background: dimgrey;
+      display: flex;
+      align-items: center;
+      border-radius: 12px 12px 0px 0px;
+    }
+
+    .label h2 {
+      width: 100%;
+      text-align: left;
+      margin: 0px 0px 0px 3%;
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    button {
+      padding: 8px 12px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      background-color: rgba(225, 225, 235, 0.20);
+      box-shadow: 0px 0.5px 5px rgba(0, 0, 0, 0.3);
+      border-radius: 100px;
+      border: none;
+      cursor: none;
+      margin: 0px 3% 0px 0px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #qrContainer {
+      margin-top: 20px;
+      display: inline-block;
+    }
+
+    #downloadLink {
+      display: none;
+      width: 80%;
+      padding: 12px 12px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      background-color: #ff6f00;
+      box-shadow: 0px 0.5px 5px rgba(0, 0, 0, 0.3);
+      border-radius: 100px;
+      border: none;
+      cursor: none;
+      margin: 8px 0% 0px 0px;
+    }
+
+    #downloadLink:hover {
+      text-decoration: none;
+      background-color: #ff6f00;
+      box-shadow: 0px 0.5px 5px rgba(0, 0, 0, 0.3) inset;
+    }
+
+    h3 {
+      margin: 0px 6px 0px 6px;
+      font-size: 11px;
+      font-weight: 100;
+    }
+
+    .trigger {
+      display: inline-block;
+      width: 90%;
+      padding: 12px 12px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      background-color: #2962ff;
+      box-shadow: 0px 0.5px 5px rgba(0, 0, 0, 0.3);
+      border-radius: 100px;
+      border: none;
+      cursor: none;
+      margin: 8px 0% 0px 0px;
+      cursor: pointer;
+    }
+
+    .trigger:hover {
+      background: #0056b3;
+    }
+
+    /* Hide checkbox */
+    input[type="checkbox"] {
+      display: none;
+    }
+
+    /* Popup overlay */
+    .popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      visibility: hidden;
+      opacity: 0;
+      transition: 0.3s ease;
+    }
+
+    /* Show popup when checkbox is checked */
+    input[type="checkbox"]:checked+.popup {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .popup .box {
+      width: 340px;
+      background: #fff;
+      padding: 18px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .close {
+      margin-top: 15px;
+      font-size: 15px;
+      font-weight: 800;
+      background: #fff;
+      color: #2962ff;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      background: #0056b3;
+    }
+
+    .bole {
+      width: 100%;
+      text-align: left;
+    }
+
+    .bole b {
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .titner {
+      display: flex;
+      align-items: center;
+    }
+
+    .titner input {
+      margin: 0px 0 10px 0%;
+      width: 100%;
+      padding: 8px;
+      font-size: 14px;
+      font-weight: 800;
+      border: 1.3px solid #000;
+      border-radius: 6px;
+      outline: none;
+    }
+
+    .titner img {
+      width: 36px;
+      height: 36px;
+      margin: 0px 0px 10px 10px;
+    }
+
+    .titner a {
+      display: flex;
+      align-items: center;
+      cursor: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box">
+    <div class="label">
+      <h2>Qris ID Mitra</h2>
+      <button class="per" onclick="generateQR()">Perbarui</button>
+    </div>
+    <div id="qrContainer"></div>
+    <button class="unduh" id="downloadLink">Bagikan Dan Unduh</button> <br /><br />
+    <h3>Jika Tidak Dapat Menyimpan Qris Mitra mu, Maka Screenshot Saja Halaman Ini</h3> <br />
+  </div>
+
+  <label class="trigger" for="popup1">Mulai Transfer</label>
+
+  <input type="checkbox" id="popup1">
+  <!-- Popup 1 -->
+  <div class="popup">
+    <div class="box">
+      <form method="GET" action="https://olshopgue.bukaolshop.site/produk/ini-judul-produk-828128">
+        <div class="bole">
+          <b>Scan Qris ID</b>
+          <div class="titner">
+            <input name="catatan" placeholder="Masukkan catatan disini" class="{{hasil_scan}}">
+            <a href="https://olshopgue.bukaolshop.site/scan_barcode"><img src="https://i.ibb.co.com/3NWw6tV/poster-2025-01-16-113411.png"></a>
+          </div>
+          <b>Donimal Transfer</b>
+          <div class="titner">
+            <input name="catatan" placeholder="Masukkan catatan disini" class="{{hasil_scan}}">
+          </div>
+          <b>Pesan Khusus</b>
+          <div class="titner">
+            <input name="catatan" placeholder="Masukkan catatan disini" class="{{hasil_scan}}">
+          </div>
+          <button style="width: 100%;" class="trigger" type="submit">Transfer Sekarang</button>
+        </div>
+      </form>
+
+      <br>
+      <label class="close" for="popup1">BATALKAN</label>
+    </div>
+  </div>
+
+  <script>
+    function generateQR() {
+      // Data QRIS
+      const userId = "{{id_user}}"; // ID user
+      // Isi Data Qris
+      const qrisData = `${userId}`;
+
+      // Hapus QR dan link sebelumnya
+      const qrContainer = document.getElementById('qrContainer');
+      const downloadLink = document.getElementById('downloadLink');
+      qrContainer.innerHTML = "";
+      downloadLink.style.display = "none";
+
+      // Generate QR Code
+      QRCode.toDataURL(qrisData, { width: 300 }, function(error, url) {
+        if (error) {
+          console.error(error);
+          alert("Terjadi kesalahan saat membuat QR Code!");
+        } else {
+          // Tampilkan gambar QR
+          const img = document.createElement("img");
+          img.src = url;
+          qrContainer.appendChild(img);
+
+          // Buat link untuk download/share
+          downloadLink.style.display = "inline-block";
+          downloadLink.textContent = "Bagikan Dan Unduh";
+
+          // Unduh file secara manual menggunakan JavaScript
+          downloadLink.onclick = function() {
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "qris.png"; // Nama file unduhan
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          };
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>
